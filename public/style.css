@@ -1,0 +1,205 @@
+* {
+    box-sizing: border-box;
+}
+
+button:active{
+    transform: scale(.95);
+}
+
+
+body {
+    background-color: #212121; 
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+}
+
+.joinLabel {
+    text-align: center;
+    font-size: 30px; /* Adjust the font size as needed */
+    font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    color: #FAF5E4; /* Set the text color to your desired value */
+    margin-bottom: 10px; /* Adjust the margin as needed */
+
+}
+
+.titleLabel3 {
+    text-align: center;
+    font-size: 80px; /* Adjust the font size as needed */
+    font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    color: #DD334C; /* Set the text color to your desired value */
+    margin-bottom: 10px; /* Adjust the margin as needed */
+
+}
+
+.titleLabel2 {
+    text-align: center;
+    font-size: 80px; /* Adjust the font size as needed */
+    font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    color: #F8B400; /* Set the text color to your desired value */
+    margin-bottom: 10px; /* Adjust the margin as needed */
+
+}
+
+.titleLabel1 {
+    text-align: center;
+    font-size: 80px; /* Adjust the font size as needed */
+    font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    color: #125B50; /* Set the text color to your desired value */
+    margin-bottom: 10px; /* Adjust the margin as needed */
+
+}
+
+.titleLabelExc {
+    text-align: center;
+    font-size: 80px; /* Adjust the font size as needed */
+    font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    color: #FAF5E4; /* Set the text color to your desired value */
+    margin-bottom: 10px; /* Adjust the margin as needed */
+
+}
+
+
+.rules {
+    background-color: #F8B400;
+    color: white;
+    cursor: pointer;
+    width: 300px;
+    padding: 15px;
+    text-align: center;
+    font-size: 22px;
+    border-radius: 5px;
+    border: 2px solid #F8B400;
+    font-weight: 600;
+  }
+
+.join {
+    width: 300px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: rgb(255, 255, 255);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 5px;
+}
+
+#joinCode {
+    text-align: center;
+    width: 250px;
+    height: 50px;
+    margin-bottom: 10px;
+
+    border-radius: 5px;
+    font-size: 18px;
+    border: 2px solid rgb(177, 177, 177);
+}
+
+#joinButton {
+    height: 50px;
+    width: 250px;
+
+    background-color: #BE6363;
+    color: rgb(255, 255, 255);
+    font-size: 18px;
+    border-radius: 5px;
+    border: 2px solid #BE6363;
+    font-weight: 600;
+}
+
+.create {
+    width: 300px; /* Adjust the width as needed */
+    margin: 20px auto; /* Adjust the margin as needed */
+    padding: 20px;
+    background-color: rgb(255, 255, 255);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 5px;
+}
+
+#createButton {
+    height: 50px;
+    width: 250px;
+
+    background-color: #125B50;
+    color: rgb(255, 255, 255);
+    font-size: 18px;
+    border-radius: 5px;
+    border: 2px solid #125B50;
+    font-weight: 600;
+}
+
+
+
+
+@media (max-width: 500px) {
+    .rules {
+        background-color: #F8B400;
+        color: white;
+        cursor: pointer;
+        width: 65%;
+        padding: 15px;
+        text-align: center;
+        font-size: 22px;
+        border: 2px solid #F8B400;
+        font-weight: 600;
+    }
+
+    .join {
+        width: 65%;
+        margin: 5% auto;
+        padding: 20px 10px; 
+        border-radius: 5px;
+
+        background-color: rgb(255, 255, 255);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #joinCode {
+        width: 90%;
+        height: 50px; /* Maintain the same height as the larger screen */
+        margin-bottom: 10px; /* Maintain the same margin as the larger screen */
+
+        border-radius: 5px;
+        font-size: 18px;
+        border: 2px solid rgb(177, 177, 177);
+    }
+
+    #joinButton {
+        
+        width: 90%;
+        height: 50px; /* Maintain the same height as the larger screen */
+
+        background-color: #BE6363;
+        color: rgb(255, 255, 255);
+        font-size: 18px;
+        border-radius: 5px;
+        border: 2px solid #BE6363;
+        font-weight: 600;
+    }
+
+    .create {
+        width: 65%;
+        margin: 5% auto;
+        padding: 20px 10px; 
+        border-radius: 5px;
+        background-color: rgb(255, 255, 255);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    #createButton {
+        width: 90%;
+        height: 50px;
+    
+        background-color: #125B50;
+        color: rgb(255, 255, 255);
+        font-size: 18px;
+        border-radius: 5px;
+        border: 2px solid #125B50;
+        font-weight: 600;
+    }
+}
