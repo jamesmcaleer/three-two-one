@@ -50,6 +50,7 @@ ws.addEventListener("message", (event) =>{
     }
 })
 
+/*
 window.addEventListener("beforeunload", (event) => {
     const url = window.location.href
     const urlSplit = url.split('/').filter(part => part.trim() !== '');
@@ -61,6 +62,7 @@ window.addEventListener("beforeunload", (event) => {
     console.log("beforeunload", roomCode)
     ws.send(JSON.stringify(message))
 })
+*/
 
 function sendWord() {
     const inputElement = document.getElementById("textInput");

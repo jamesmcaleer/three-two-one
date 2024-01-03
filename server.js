@@ -166,7 +166,7 @@ wss.on("connection", (ws, req) => {
                     }
                 }
                 var room = rooms[index]
-                
+                console.log(room)
                 if ((room.users[0] === 1) || (room.users[0] === 0)) {
                     room.users[0] = ws
                 }
@@ -279,6 +279,34 @@ wss.on("connection", (ws, req) => {
 
     ws.on("close", () =>{
         console.log("leaving page")
+        
+        for (let i = 0; i < rooms.length; i++){
+            let room = rooms[i]
+            if (room.users[0] === ws){
+                room.users[0] = 0
+                
+                setTimeout(() => {
+                    if (room.users[0] === 0 && room.users[1] === 0){
+                    
+                        rooms.pop(i)
+                        console.log("deleting room")
+                    }
+                }, 5000);
+                
+            }
+            else if (room.users[1] === ws){
+                room.users[1] = 0
+                setTimeout(() => {
+                    if (room.users[0] === 0 && room.users[1] === 0){
+                    
+                        rooms.pop(i)
+                        console.log("deleting room")
+                    }
+                }, 5000);
+            }
+        }
+
+        
         // add room leaving
 
         /*
