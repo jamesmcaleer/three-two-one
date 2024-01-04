@@ -18,7 +18,11 @@
     <br>
     <br>
     
-    <%= room.code %>
+    <h1>GAME PIN</h1>
+    <div class="room">
+        <h1 class="roomCode"> <%= room.code %> </h1>
+    </div>
+    
     <% room.users.forEach(user =>{ %>
         <ul> <%= user %> </ul>
     <% }); %>

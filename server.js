@@ -133,6 +133,8 @@ wss.on("connection", (ws, req) => {
                 break
 
             case "close":
+                // unreachable
+                console.log("unreachable, error")
                 var roomCode = data.code
                 var index = -1
                 for (let i = 0; i < rooms.length; i++){
@@ -151,8 +153,8 @@ wss.on("connection", (ws, req) => {
                 console.log(room)
 
                 if ((room.users[0] === 0) && room.users[1] === 0){
+                    console.log(`deleting room ${room.code}`)
                     rooms.pop(index)
-                    console.log("deleting room")
                 }
 
                 break
@@ -166,7 +168,7 @@ wss.on("connection", (ws, req) => {
                     }
                 }
                 var room = rooms[index]
-                console.log(room)
+                console.log(`confirming room ${roomCode}`)
                 if ((room.users[0] === 1) || (room.users[0] === 0)) {
                     room.users[0] = ws
                 }
@@ -204,9 +206,13 @@ wss.on("connection", (ws, req) => {
                     users : [1, 0],
                     words : [["", ""]],
                 }
+
+                
+
                 
                 // should also put the client into the rooms page
                 rooms.push(newRoom)
+                console.log(`created room ${newRoom.code}`)
                 // send message back to client
                 const success = {
                     type : "success room message",
@@ -214,6 +220,7 @@ wss.on("connection", (ws, req) => {
                     room : newRoom.code
                 }
                 ws.send(JSON.stringify(success))
+
                 break
             case "join":
                 var roomCode = data.code
@@ -285,24 +292,19 @@ wss.on("connection", (ws, req) => {
             if (room.users[0] === ws){
                 room.users[0] = 0
                 
-                setTimeout(() => {
-                    if (room.users[0] === 0 && room.users[1] === 0){
+                if (room.users[0] === 0 && room.users[1] === 0){
+                    console.log(`deleting room ${room.code}, index ${i}`)
+                    wss.delayDelete(i)
                     
-                        rooms.pop(i)
-                        console.log("deleting room")
-                    }
-                }, 5000);
+                }
                 
             }
             else if (room.users[1] === ws){
                 room.users[1] = 0
-                setTimeout(() => {
-                    if (room.users[0] === 0 && room.users[1] === 0){
-                    
-                        rooms.pop(i)
-                        console.log("deleting room")
-                    }
-                }, 5000);
+                if (room.users[0] === 0 && room.users[1] === 0){
+                    console.log(`deleting room ${room.code}`)
+                    wss.delayDelete(i)
+                }
             }
         }
 
@@ -324,6 +326,12 @@ wss.on("connection", (ws, req) => {
 
 
 })
+
+wss.delayDelete = function (i) {
+    setTimeout(() => {
+        rooms.splice(i, 1)
+    }, 5000);
+}
 
 wss.checkWords = function (words) {
     if (words[0] === words[1]){
