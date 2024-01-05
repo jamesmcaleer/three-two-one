@@ -31,45 +31,9 @@ app.get('/:roomCode', (req, res) => {
     
 })
 
-/*
-var users = [0,0]
-var words = ["", ""]
-*/
-
-
 
 wss.on("connection", (ws, req) => {
     console.log("joining page")
-    
-    /*
-    if (users[0] == 0){
-        ws.id = 1
-        users[0] = ws
-    }
-    else if (users[1] == 0){
-        ws.id = 2
-        users[1] = ws
-    }
-    else{
-        ws.close()
-        console.log("extra client join blocked")
-        return
-    }
-
-    const id = {
-        message : ws.id,
-        type : "id",
-    }
-    ws.send(JSON.stringify(id))
-
-    console.log(`New client ${ws.id} connected!`)
-
-    console.log("users on connection: ")
-    users.forEach(user =>{
-        console.log(user.id)
-    })
-    */
-
 
     // show room code until both players join
     // then keep playing game until they win or player leaves
@@ -106,7 +70,6 @@ wss.on("connection", (ws, req) => {
                 }) 
 
                 if (!empty){
-                    
                     if (room.privWords[room.privWords.length - 1][0] === room.privWords[room.privWords.length - 1][1]){
                         const message = {
                             type : "game over"
@@ -128,16 +91,17 @@ wss.on("connection", (ws, req) => {
                         room.privWords.push(["", ""])
                     }
                     
-                    room.pubWords = room.privWords;
+                    // creates a shallow copy
+                    let temp = JSON.stringify(room.privWords)
+                    room.pubWords = JSON.parse(temp) 
                     
                 }
+                console.log(room.pubWords)
 
 
                 break
 
-            case "close":
-                // unreachable
-                console.log("unreachable, error")
+            case "verify user":
                 var roomCode = data.code
                 var index = -1
                 for (let i = 0; i < rooms.length; i++){
@@ -147,36 +111,32 @@ wss.on("connection", (ws, req) => {
                     }
                 }
                 var room = rooms[index]
-                if (room.users[0] === ws){
-                    room.users[0] = 0
-                }
-                else if (room.users[1] === ws){
-                    room.users[1] = 0
-                }
-                console.log(room)
-
-                if ((room.users[0] === 0) && room.users[1] === 0){
-                    console.log(`deleting room ${room.code}`)
-                    rooms.pop(index)
-                }
-
-                break
-            case "confirm room":
-                var roomCode = data.code
-                var index = -1
-                for (let i = 0; i < rooms.length; i++){
-                    if (rooms[i].code === roomCode){
-                        index = i
-                        break
-                    }
-                }
-                var room = rooms[index]
-                console.log(`confirming room ${roomCode}`)
-                if ((room.users[0] === 1) || (room.users[0] === 0)) {
+                console.log(`verifying join to ${roomCode}`)
+                if ((room.users[0] === 1) || (room.users[0] === 0)) { // if the first slot is joinable
                     room.users[0] = ws
+                    const updatePlayer = {
+                        type : "update player",
+                        players : JSON.stringify(room.users)
+                    }
+                    room.users.forEach(user => {
+                        if (user !== 0 && user !== 1){
+                            user.send(JSON.stringify(updatePlayer))
+                        }
+                        
+                    })
                 }
-                else if ((room.users[1] === 1) || (room.users[1] === 0)){
+                else if ((room.users[1] === 1) || (room.users[1] === 0)){ // if the second slot is joinable
                     room.users[1] = ws
+                    const updatePlayer = {
+                        type : "update player",
+                        players : JSON.stringify(room.users)
+                    }
+                    room.users.forEach(user => {
+                        if (user !== 0 && user !== 1){
+                            user.send(JSON.stringify(updatePlayer))
+                        }
+                        
+                    })
                 }
                 else{
                     console.log("need to exit")
@@ -271,22 +231,7 @@ wss.on("connection", (ws, req) => {
             
             
         }
-        /* 
-        console.log(`Client ${ws.id} sent us: ${data}`)
-        words[ws.id - 1] = data.toString()
-        console.log(words[0])
-        console.log(words[1])
-        if (!(words.includes(""))){
-            console.log("checking")
-            const result = {
-                message: wss.checkWords(words),
-                type: "result",
-            }
-            users.forEach((client) => client.send(JSON.stringify(result)))
-            words = ["", ""]
 
-        }
-        */
     })
 
     ws.on("close", () =>{
@@ -296,6 +241,17 @@ wss.on("connection", (ws, req) => {
             let room = rooms[i]
             if (room.users[0] === ws){
                 room.users[0] = 0
+
+                const updatePlayer = {
+                    type : "update player",
+                    players : JSON.stringify(room.users)
+                }
+                room.users.forEach(user => {
+                    if (user !== 0 && user !== 1){
+                        user.send(JSON.stringify(updatePlayer))
+                    }
+                    
+                })
                 
                 if (room.users[0] === 0 && room.users[1] === 0){
                     setTimeout(() => {
@@ -309,6 +265,17 @@ wss.on("connection", (ws, req) => {
             }
             else if (room.users[1] === ws){
                 room.users[1] = 0
+
+                const updatePlayer = {
+                    type : "update player",
+                    players : JSON.stringify(room.users)
+                }
+                room.users.forEach(user => {
+                    if (user !== 0 && user !== 1){
+                        user.send(JSON.stringify(updatePlayer))
+                    }
+                    
+                })
                 
                 if (room.users[0] === 0 && room.users[1] === 0){
                     setTimeout(() => {
@@ -322,22 +289,6 @@ wss.on("connection", (ws, req) => {
 
             
         }
-
-        
-
-        
-        // add room leaving
-
-        /*
-        console.log(`Client ${ws.id} has disconnected`)
-        users[ws.id - 1] = 0
-        words[ws.id - 1] = ""
-
-        console.log("users on disconnect: ")
-        users.forEach(user =>{
-            console.log(user.id)
-        })
-        */
        
     })
 

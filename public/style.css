@@ -19,21 +19,27 @@ h1 {
     font-weight: lighter;
     font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
     color: #ffffff; /* Set the text color to your desired value */
-    margin: 10px; /* Adjust the margin as needed */
+    margin: 5px; /* Adjust the margin as needed */
 
+}
+
+h4 {
+    margin : 0;
 }
 
 .room {
     width: 250px; /* Adjust the width as needed */
-    margin: 20px auto; /* Adjust the margin as needed */
+    margin: 0px auto; /* Adjust the margin as needed */
     background-color: rgb(255, 255, 255);
     display: flex;
     flex-direction: column;
     align-items: center;
     border-radius: 5px;
+    border-radius: 5px;
+    border: 1px solid #ffffff;
 }
 
-.roomCode {
+#roomCode {
     font-size: 70px;
     color: #212121;
 }

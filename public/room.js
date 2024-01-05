@@ -7,22 +7,34 @@ ws.addEventListener("open", () => {
     const urlSplit = url.split('/').filter(part => part.trim() !== '');
     const roomCode = urlSplit[urlSplit.length - 1]
     const message = {
-        type : "confirm room",
+        type : "verify user",
         code : roomCode,
     }
     console.log(roomCode)
     ws.send(JSON.stringify(message))
     
-
-    // right now getting the ws url which does not have params, 
-    // need 3000 url: see chatGPT
-    // also beware of the multiple slashes 
 })
 
 ws.addEventListener("message", (event) =>{
     const data = JSON.parse(event.data)
     const type = data.type
     switch (type){
+        case "update player":
+            const players = JSON.parse(data.players)
+            if (players[0] !== 0){
+                document.getElementById("playerOne").innerHTML = "Player 1"
+            }
+            else{
+                document.getElementById("playerOne").innerHTML = ""
+            }
+            if (players[1] !== 0){
+                document.getElementById("playerTwo").innerHTML = "Player 2"
+            }
+            else{
+                document.getElementById("playerTwo").innerHTML = ""
+            }
+            break
+
         case "game over":
             console.log("game over")
             location.replace(location.href);
@@ -30,7 +42,13 @@ ws.addEventListener("message", (event) =>{
         
         case "continue":
             console.log("continue")
-            location.replace(location.href);
+            var submittedWords = document.createElement("ul")
+            submittedWords.innerText = data.words.join(" ")
+            
+            const allDiv = document.getElementById("allWords")
+            //allDiv.appendChild(shownWords)
+            allDiv.insertBefore(submittedWords, allDiv.firstChild)
+
             break
 
         case "room kick":
@@ -83,11 +101,34 @@ function sendWord() {
         console.log("bad input")
     }
 
-    
 
-    // Check if the input is not empty before sending
-    
-
-    // Clear the input field after sending the message (optional)
     inputElement.value = "";
+}
+
+function copyLink() {
+    var textarea = document.createElement("textarea");
+    var copyMessage = document.getElementById("copyMessage")
+    // Set its value to the text you want to copy
+    textarea.value = window.location.href;
+
+    // Make it non-editable to avoid focus and move it out of the viewport
+    textarea.setAttribute("readonly", "");
+    textarea.style.position = "absolute";
+    textarea.style.left = "-9999px";
+
+    // Append the textarea element to the HTML document
+    document.body.appendChild(textarea);
+
+    // Select the text in the textarea
+    textarea.select();
+
+    // Execute the copy command
+    document.execCommand('copy');
+
+    // Remove the textarea from the DOM
+    document.body.removeChild(textarea);
+
+    console.log("Text copied to clipboard!");
+    copyMessage.innerHTML = "[link copied]"
+
 }
