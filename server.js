@@ -91,22 +91,23 @@ wss.on("connection", (ws, req) => {
                 var room = rooms[index]
 
                 if (room.users[0] === ws){
-                    room.words[room.words.length - 1][0] = word
+                    room.privWords[room.privWords.length - 1][0] = word
                 }
                 else if (room.users[1] === ws){
-                    room.words[room.words.length - 1][1] = word
+                    room.privWords[room.privWords.length - 1][1] = word
                 }
                 console.log(`submitted ${word}`)
 
                 var empty = false
-                room.words[room.words.length - 1].forEach(word =>{
+                room.privWords[room.privWords.length - 1].forEach(word =>{
                     if (word === ""){
                         empty = true
                     }
                 }) 
 
                 if (!empty){
-                    if (room.words[room.words.length - 1][0] === room.words[room.words.length - 1][1]){
+                    
+                    if (room.privWords[room.privWords.length - 1][0] === room.privWords[room.privWords.length - 1][1]){
                         const message = {
                             type : "game over"
                         }
@@ -118,14 +119,16 @@ wss.on("connection", (ws, req) => {
                     else{
                         const message = {
                             type : "continue",
-                            words : room.words[room.words.length - 1]
+                            words : room.privWords[room.privWords.length - 1]
                         }
                         room.users.forEach(user => {
                             user.send(JSON.stringify(message))
                         })
                         console.log("continue")
-                        room.words.push(["", ""])
+                        room.privWords.push(["", ""])
                     }
+                    
+                    room.pubWords = room.privWords;
                     
                 }
 
@@ -204,7 +207,8 @@ wss.on("connection", (ws, req) => {
                 const newRoom = {
                     code : roomCode,
                     users : [1, 0],
-                    words : [["", ""]],
+                    pubWords : [["", ""]],
+                    privWords : [["", ""]],
                 }
 
                 
@@ -213,6 +217,7 @@ wss.on("connection", (ws, req) => {
                 // should also put the client into the rooms page
                 rooms.push(newRoom)
                 console.log(`created room ${newRoom.code}`)
+                console.log(rooms)
                 // send message back to client
                 const success = {
                     type : "success room message",
@@ -293,20 +298,32 @@ wss.on("connection", (ws, req) => {
                 room.users[0] = 0
                 
                 if (room.users[0] === 0 && room.users[1] === 0){
-                    console.log(`deleting room ${room.code}, index ${i}`)
-                    wss.delayDelete(i)
-                    
+                    setTimeout(() => {
+                        if (room.users[0] === 0 && room.users[1] === 0){
+                            console.log(`deleting room ${room.code}, index ${i}`)
+                            rooms.splice(i, 1)
+                        }
+                    }, 5000);
                 }
                 
             }
             else if (room.users[1] === ws){
                 room.users[1] = 0
+                
                 if (room.users[0] === 0 && room.users[1] === 0){
-                    console.log(`deleting room ${room.code}`)
-                    wss.delayDelete(i)
+                    setTimeout(() => {
+                        if (room.users[0] === 0 && room.users[1] === 0){
+                            console.log(`deleting room ${room.code}, index ${i}`)
+                            rooms.splice(i, 1)
+                        }
+                    }, 5000);
                 }
             }
+
+            
         }
+
+        
 
         
         // add room leaving
@@ -327,6 +344,8 @@ wss.on("connection", (ws, req) => {
 
 })
 
+
+// game only going to server that no longer exists, happens after the first word submits
 wss.delayDelete = function (i) {
     setTimeout(() => {
         rooms.splice(i, 1)

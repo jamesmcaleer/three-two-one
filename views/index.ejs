@@ -33,7 +33,7 @@
     <input type="text" id="textInput" minlength="3" maxlength="15" size="10" />
     <button id="submit" onclick="sendWord()">➤</button>
 
-    <% room.words.forEach(word =>{ %>
+    <% room.pubWords.forEach(word =>{ %>
         <ul> <%= word.join(" ") %> </ul>
     <% }); %>
 </body>
