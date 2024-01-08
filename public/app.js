@@ -53,7 +53,7 @@ function joinGame(){
 }
 
 function showRules() {
-    window.location.href = `/rules.html`;
+    window.location.href = `/rules`;
 
 }
 

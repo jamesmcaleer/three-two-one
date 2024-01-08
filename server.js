@@ -16,6 +16,11 @@ const wss = new WebSocket.Server({ port:8082 });
 
 const rooms = [];
 
+app.get('/rules', (req, res) => {
+    console.log("rules")
+    res.sendFile(path.join(__dirname, '/public/rules.html'))
+})
+
 app.get('/:roomCode', (req, res) => {
     const roomCode = req.params.roomCode
     const message = {
@@ -30,6 +35,8 @@ app.get('/:roomCode', (req, res) => {
     })
     
 })
+
+
 
 
 wss.on("connection", (ws, req) => {
@@ -53,6 +60,14 @@ wss.on("connection", (ws, req) => {
                 }
 
                 var room = rooms[index]
+
+                console.log(room.code)
+
+                if (room.started === false) {
+                    room.started = true
+                    console.log("game started")
+
+                }
 
                 if (room.users[0] === ws){
                     room.privWords[room.privWords.length - 1][0] = word
@@ -114,12 +129,37 @@ wss.on("connection", (ws, req) => {
                 console.log(`verifying join to ${roomCode}`)
                 if ((room.users[0] === 1) || (room.users[0] === 0)) { // if the first slot is joinable
                     room.users[0] = ws
+
+                    if (room.users[1] !== 0 && room.users[1] !== 1 && room.users[1] !== undefined){
+
+                        const updateCode = {
+                            type : "update code"
+                        }
+
+                        room.users.forEach(user => {
+                            if (user !== 0 && user !== 1 && user !== undefined){
+                                user.send(JSON.stringify(updateCode))
+                            }
+                            
+                        })
+
+                        console.log("removing join code")
+                    }
+
+                    var players = [0, 0]
+
+                    for (let i = 0; i < room.users.length; i++){
+                        if (room.users[i] !== 0 && room.users[i] !== 1 && room.users[i] !== undefined){
+                            players[i] = 1
+                        }
+                    }
+
                     const updatePlayer = {
                         type : "update player",
-                        players : JSON.stringify(room.users)
+                        players : players
                     }
                     room.users.forEach(user => {
-                        if (user !== 0 && user !== 1){
+                        if (user !== 0 && user !== 1 && user !== undefined){
                             user.send(JSON.stringify(updatePlayer))
                         }
                         
@@ -127,12 +167,38 @@ wss.on("connection", (ws, req) => {
                 }
                 else if ((room.users[1] === 1) || (room.users[1] === 0)){ // if the second slot is joinable
                     room.users[1] = ws
+
+                    if (room.users[0] !== 0 && room.users[0] !== 1 && room.users[0] !== undefined){
+
+                        const updateCode = {
+                            type : "update code"
+                        }
+
+                        room.users.forEach(user => {
+                            if (user !== 0 && user !== 1 && user !== undefined){
+                                user.send(JSON.stringify(updateCode))
+                                
+                            }
+                            
+                        })
+                        console.log("removing join code")
+
+                    }
+
+                    var players = [0, 0]
+
+                    for (let i = 0; i < room.users.length; i++){
+                        if (room.users[i] !== 0 && room.users[i] !== 1 && room.users[i] !== undefined){
+                            players[i] = 1
+                        }
+                    }
+
                     const updatePlayer = {
                         type : "update player",
-                        players : JSON.stringify(room.users)
+                        players : players
                     }
                     room.users.forEach(user => {
-                        if (user !== 0 && user !== 1){
+                        if (user !== 0 && user !== 1 && user !== undefined){
                             user.send(JSON.stringify(updatePlayer))
                         }
                         
@@ -166,6 +232,7 @@ wss.on("connection", (ws, req) => {
                     
                 const newRoom = {
                     code : roomCode,
+                    started : false,
                     users : [1, 0],
                     pubWords : [["", ""]],
                     privWords : [["", ""]],
@@ -236,60 +303,68 @@ wss.on("connection", (ws, req) => {
 
     ws.on("close", () =>{
         console.log("leaving page")
-        
-        for (let i = 0; i < rooms.length; i++){
-            let room = rooms[i]
+        var found = false
+        for (var i = 0; i < rooms.length; i++){
+
+            var room = rooms[i]
             if (room.users[0] === ws){
                 room.users[0] = 0
-
-                const updatePlayer = {
-                    type : "update player",
-                    players : JSON.stringify(room.users)
-                }
-                room.users.forEach(user => {
-                    if (user !== 0 && user !== 1){
-                        user.send(JSON.stringify(updatePlayer))
-                    }
-                    
-                })
-                
-                if (room.users[0] === 0 && room.users[1] === 0){
-                    setTimeout(() => {
-                        if (room.users[0] === 0 && room.users[1] === 0){
-                            console.log(`deleting room ${room.code}, index ${i}`)
-                            rooms.splice(i, 1)
-                        }
-                    }, 5000);
-                }
+                found = true
+                break
                 
             }
             else if (room.users[1] === ws){
                 room.users[1] = 0
+                found = true
+                break
+            }
+        }
+        if (found){
+            console.log(i)
 
-                const updatePlayer = {
-                    type : "update player",
-                    players : JSON.stringify(room.users)
-                }
-                room.users.forEach(user => {
-                    if (user !== 0 && user !== 1){
-                        user.send(JSON.stringify(updatePlayer))
-                    }
-                    
-                })
-                
-                if (room.users[0] === 0 && room.users[1] === 0){
-                    setTimeout(() => {
-                        if (room.users[0] === 0 && room.users[1] === 0){
-                            console.log(`deleting room ${room.code}, index ${i}`)
-                            rooms.splice(i, 1)
-                        }
-                    }, 5000);
+            var players = [0, 0]
+            for (let j = 0; j < room.users.length; j++){
+                if (room.users[j] !== 0 && room.users[j] !== 1 && room.users[j] !== undefined){
+                    players[j] = 1
                 }
             }
 
-            
+            const updatePlayer = {
+                type : "update player",
+                players : players
+            }
+            room.users.forEach(user => {
+                if (user !== 0 && user !== 1){
+                    user.send(JSON.stringify(updatePlayer))
+                }
+                
+            })
+
+            if (room.started){
+                setTimeout(() => {
+                    if (room.users[0] === 0 || room.users[0] === undefined || room.users[1] === 0 || room.users[1] === undefined){
+                        // add message for other user
+                        
+                        rooms.forEach( curRoom =>{
+                            if (curRoom.code === room.code){
+                                console.log(`deleting room ${room.code}, index ${i}, started`)
+                                rooms.splice(i, 1)
+                            }
+                        })
+                    }
+                        
+                
+                }, 10000)
+            }
+            else if (room.users[0] === 0 && room.users[1] === 0){
+                setTimeout(() => {
+                    if (room.users[0] === 0 && room.users[1] === 0){
+                        console.log(`deleting room ${room.code}, index ${i}, room empty`)
+                        rooms.splice(i, 1)
+                    }
+                }, 5000);
+            }
         }
-       
     })
 
 

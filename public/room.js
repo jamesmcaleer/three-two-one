@@ -19,52 +19,54 @@ ws.addEventListener("message", (event) =>{
     const data = JSON.parse(event.data)
     const type = data.type
     switch (type){
+        case "update code":
+            //document.getElementById("gamePinText").style.display = "none"
+            //document.getElementById("room").style.display = "none"
+            document.getElementById("inputArea").style.display = "block"
+            document.getElementById("allWords").style.display = "block"
+            
+            break
+
         case "update player":
-            const players = JSON.parse(data.players)
-            if (players[0] !== 0){
-                document.getElementById("playerOne").innerHTML = "Player 1"
+            if (data.players[0] === 1){
+                document.getElementById("playerOne").style.display = "inline-block"
             }
             else{
-                document.getElementById("playerOne").innerHTML = ""
+                document.getElementById("playerOne").style.display = "none"
             }
-            if (players[1] !== 0){
-                document.getElementById("playerTwo").innerHTML = "Player 2"
+            if (data.players[1] === 1){
+                document.getElementById("playerTwo").style.display = "inline-block"
             }
             else{
-                document.getElementById("playerTwo").innerHTML = ""
+                document.getElementById("playerTwo").style.display = "none"
             }
             break
 
         case "game over":
-            console.log("game over")
-            location.replace(location.href);
+
             break
         
         case "continue":
             console.log("continue")
-            var submittedWords = document.createElement("ul")
-            submittedWords.innerText = data.words.join(" ")
+            var firstWord = document.createElement("label")
+            var secondWord = document.createElement("label")
+            firstWord.innerText = data.words[0]
+            secondWord.innerText = data.words[1]
+
+            var entry = document.createElement("div")
+            entry.id = "entries"
+            entry.appendChild(firstWord)
+            entry.appendChild(secondWord)
             
             const allDiv = document.getElementById("allWords")
             //allDiv.appendChild(shownWords)
-            allDiv.insertBefore(submittedWords, allDiv.firstChild)
+
+            allDiv.insertBefore(entry, allDiv.children[1])
 
             break
 
         case "room kick":
             window.location.href = "/";
-            break
-
-        case "ask url":
-            const url = window.location.href
-            const urlSplit = url.split('/').filter(part => part.trim() !== '');
-            const roomCode = urlSplit[urlSplit.length - 1]
-            const message = {
-                type : "give url",
-                code : roomCode,
-            }
-            console.log("ask url", roomCode)
-            ws.send(JSON.stringify(message))
             break
     }
 })
@@ -84,12 +86,12 @@ window.addEventListener("beforeunload", (event) => {
 */
 
 function sendWord() {
-    const inputElement = document.getElementById("textInput");
-    const word = inputElement.value.toLowerCase().trim().split(" ").join("");
+    const inputElement = document.getElementById("wordInput");
+    const word = inputElement.value.toUpperCase().trim().split(" ").join("");
     const url = window.location.href
     const urlSplit = url.split('/').filter(part => part.trim() !== '');
     const roomCode = urlSplit[urlSplit.length - 1]
-    if (word.trim !== "" && word.length >= 3 && word.length <= 15) {
+    if (word.trim !== "" && word.length >= 3 && word.length <= 12) {
         const message = {
             type : "word submit",
             word : word,
@@ -132,3 +134,9 @@ function copyLink() {
     copyMessage.innerHTML = "[link copied]"
 
 }
+
+document.addEventListener("keyup", (e) => {
+    if (e.code == "Enter") {
+        sendWord();
+    }
+})
