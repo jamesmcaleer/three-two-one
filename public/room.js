@@ -19,10 +19,24 @@ ws.addEventListener("message", (event) =>{
     const data = JSON.parse(event.data)
     const type = data.type
     switch (type){
+
+        case "allow submit":
+            const submitMessage = document.getElementById("errorMessage");
+        
+            submitMessage.textContent = "submitted";
+            break
+
+        case "deny submit":
+            const denyMessage = document.getElementById("errorMessage");
+        
+            denyMessage.textContent = "already submitted";
+            break
+
         case "update code":
             //document.getElementById("gamePinText").style.display = "none"
             //document.getElementById("room").style.display = "none"
             document.getElementById("inputArea").style.display = "block"
+            document.getElementById("pastWordsLabel").style.display = "block"
             document.getElementById("allWords").style.display = "block"
             
             break
@@ -52,16 +66,22 @@ ws.addEventListener("message", (event) =>{
             var secondWord = document.createElement("label")
             firstWord.innerText = data.words[0]
             secondWord.innerText = data.words[1]
+            firstWord.id = "entry"
+            secondWord.id = "entry"
 
             var entry = document.createElement("div")
             entry.id = "entries"
             entry.appendChild(firstWord)
             entry.appendChild(secondWord)
             
-            const allDiv = document.getElementById("allWords")
+            var allDiv = document.getElementById("allWords")
             //allDiv.appendChild(shownWords)
 
-            allDiv.insertBefore(entry, allDiv.children[1])
+            allDiv.insertBefore(entry, allDiv.firstChild)
+
+            const message = document.getElementById("errorMessage");
+        
+            message.textContent = "";
 
             break
 
@@ -98,13 +118,20 @@ function sendWord() {
             code : roomCode
         }
         ws.send(JSON.stringify(message));
+
+
     }
     else {
         console.log("bad input")
+        const errorMessage = document.getElementById("errorMessage");
+        
+        errorMessage.textContent = "must be between 3 and 12 characters";
     }
 
 
     inputElement.value = "";
+
+    
 }
 
 function copyLink() {

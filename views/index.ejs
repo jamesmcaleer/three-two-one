@@ -8,14 +8,8 @@
     <link href="style.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-    <label class="titleLabel3">3</label>
-    <label class="titleLabel2">2</label>
-    <label class="titleLabel1">1</label>
-    <label class="titleLabelExc">!</label>
-
+    <img src="logo.png" width="275" height="125">
     
-
-    <br>
     <br>
     
     <h1 id="gamePinText">GAME PIN</h1>
@@ -32,17 +26,24 @@
 
     <br>
     <div id="inputArea">
-        <input id="wordInput" type="text" id="textInput"/>
+        <input id="wordInput" type="text" id="textInput" placeholder="enter word"/>
         <button id="wordButton" onclick="sendWord()">➤</button>
         
     </div>
 
+    <label id="errorMessage"> </label>
+
+    <br>
+
+    <h1 id="pastWordsLabel">PAST WORDS</h1>
 
     <div id="allWords">
-        <label id="entryText">PAST WORDS:</label>
         <% for(let i = room.pubWords.length - 1; i >= 0; i--){ %>
             <% if (room.pubWords[i][0] !== ""){ %>
-                <div id="entries"> <label><%= room.pubWords[i][0] %></label> <label><%= room.pubWords[i][1] %></label></div>
+                <div id="entries"> 
+                    <label id="entry"><%= room.pubWords[i][0] %></label>
+                    <label id="entry"><%= room.pubWords[i][1] %></label>
+                </div>
             <%} %>
         <% }; %>
     </div>

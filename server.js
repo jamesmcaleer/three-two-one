@@ -70,48 +70,71 @@ wss.on("connection", (ws, req) => {
                 }
 
                 if (room.users[0] === ws){
-                    room.privWords[room.privWords.length - 1][0] = word
-                }
+                    var ind = 0
+                } 
                 else if (room.users[1] === ws){
-                    room.privWords[room.privWords.length - 1][1] = word
+                    var ind = 1
                 }
-                console.log(`submitted ${word}`)
 
-                var empty = false
-                room.privWords[room.privWords.length - 1].forEach(word =>{
-                    if (word === ""){
-                        empty = true
+                if (room.privWords[room.privWords.length - 1][ind] === ""){
+                    room.privWords[room.privWords.length - 1][ind] = word
+                    const message = {
+                        type : "allow submit"
                     }
-                }) 
+                    ws.send(JSON.stringify(message))
 
-                if (!empty){
-                    if (room.privWords[room.privWords.length - 1][0] === room.privWords[room.privWords.length - 1][1]){
-                        const message = {
-                            type : "game over"
+                    var empty = false
+                    room.privWords[room.privWords.length - 1].forEach(word =>{
+                        if (word === ""){
+                            empty = true
                         }
-                        room.users.forEach(user => {
-                            user.send(JSON.stringify(message))
-                        })
-                        console.log("game over")
-                    }
-                    else{
-                        const message = {
-                            type : "continue",
-                            words : room.privWords[room.privWords.length - 1]
+                    }) 
+
+                    if (!empty){
+                        if (room.privWords[room.privWords.length - 1][0] === room.privWords[room.privWords.length - 1][1]){
+                            const message = {
+                                type : "game over"
+                            }
+                            room.users.forEach(user => {
+                                user.send(JSON.stringify(message))
+                            })
+                            console.log("game over")
                         }
-                        room.users.forEach(user => {
-                            user.send(JSON.stringify(message))
-                        })
-                        console.log("continue")
-                        room.privWords.push(["", ""])
+                        else{
+                            const message = {
+                                type : "continue",
+                                words : room.privWords[room.privWords.length - 1]
+                            }
+                            room.users.forEach(user => {
+                                user.send(JSON.stringify(message))
+                            })
+                            console.log("continue")
+                            room.privWords.push(["", ""])
+                        }
+                        
+                        // creates a shallow copy
+                        let temp = JSON.stringify(room.privWords)
+                        room.pubWords = JSON.parse(temp) 
+                        
+
+
+                        //if ()
+                        
                     }
-                    
-                    // creates a shallow copy
-                    let temp = JSON.stringify(room.privWords)
-                    room.pubWords = JSON.parse(temp) 
+                    console.log(room.pubWords)
+                    console.log(`submitted ${word}`)
                     
                 }
-                console.log(room.pubWords)
+                else {
+                    const message = {
+                        type : "deny submit"
+                    }
+                    ws.send(JSON.stringify(message))
+                }
+                
+                
+
+                
 
 
                 break
@@ -127,10 +150,11 @@ wss.on("connection", (ws, req) => {
                 }
                 var room = rooms[index]
                 console.log(`verifying join to ${roomCode}`)
+                //console.log(room.users)
                 if ((room.users[0] === 1) || (room.users[0] === 0)) { // if the first slot is joinable
                     room.users[0] = ws
 
-                    if (room.users[1] !== 0 && room.users[1] !== 1 && room.users[1] !== undefined){
+                    if (room.users[1] !== 0 && room.users[1] !== 1 && room.users[1] !== undefined){ // if other slot full
 
                         const updateCode = {
                             type : "update code"
@@ -144,8 +168,10 @@ wss.on("connection", (ws, req) => {
                         })
 
                         console.log("removing join code")
+
                     }
 
+                
                     var players = [0, 0]
 
                     for (let i = 0; i < room.users.length; i++){
@@ -168,7 +194,7 @@ wss.on("connection", (ws, req) => {
                 else if ((room.users[1] === 1) || (room.users[1] === 0)){ // if the second slot is joinable
                     room.users[1] = ws
 
-                    if (room.users[0] !== 0 && room.users[0] !== 1 && room.users[0] !== undefined){
+                    if (room.users[0] !== 0 && room.users[0] !== 1 && room.users[0] !== undefined){ // if other slot if full
 
                         const updateCode = {
                             type : "update code"
@@ -183,7 +209,7 @@ wss.on("connection", (ws, req) => {
                         })
                         console.log("removing join code")
 
-                    }
+                    }  
 
                     var players = [0, 0]
 
@@ -268,23 +294,27 @@ wss.on("connection", (ws, req) => {
                     // send message to client
                     const failure = {
                         type : "failure room message",
-                        message : "unknown game pin, please try again"
+                        message : "unknown game pin"
                     }
                     ws.send(JSON.stringify(failure))
                 }
                 else if ((rooms[index].users[0] !== 0) && (rooms[index].users[1] !== 0)){
                     const failure = {
                         type : "failure room message",
-                        message : "room is full"
+                        message : "game is full"
                     }
                     ws.send(JSON.stringify(failure))
                 }
                 else{
                     const room = rooms[index]
                     
-                    // should also put the client into the rooms page
-                    // to do this i need an express server and have to use hogan middleware to dynamically generate an html page
-                    room.users[1] = 1
+                    // staging for join ex. making the user 1 so it can be converted to ws on enter
+                    if (room.users[0] === 0 || room.users[0] === 1) {
+                        room.users[0] = 1
+                    }
+                    else if (room.users[1] === 0 || room.users[1] === 1) {
+                        room.users[1] = 1
+                    }
 
                     const success = {
                         type : "success room message",
@@ -320,7 +350,7 @@ wss.on("connection", (ws, req) => {
             }
         }
         if (found){
-            console.log(i)
+            //console.log(i)
 
             var players = [0, 0]
             for (let j = 0; j < room.users.length; j++){
@@ -354,7 +384,7 @@ wss.on("connection", (ws, req) => {
                     }
                         
                 
-                }, 10000)
+                }, 60000)
             }
             else if (room.users[0] === 0 && room.users[1] === 0){
                 setTimeout(() => {
@@ -403,7 +433,7 @@ wss.generateRoomCode = function () {
     for (let i = 0; i < 5; i++){
       code += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
-    console.log(code)
+    //console.log(code)
     return code;
 }
 

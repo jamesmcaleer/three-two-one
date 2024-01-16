@@ -13,15 +13,15 @@ ws.addEventListener("message", (event) => {
     const message = data.message
     // console.log(data)
     if (type === "success room message"){
-        const messageLabel = document.getElementById("roomMessage");
+        const messageLabel = document.getElementById("errorMessage");
         const room = data.room
         
-        messageLabel.textContent = message;
+        //messageLabel.textContent = message;
 
         window.location.href = `/${room}`;
     }
     else if (type === "failure room message"){
-        const messageLabel = document.getElementById("roomMessage");
+        const messageLabel = document.getElementById("errorMessage");
         
         messageLabel.textContent = message;
     }
