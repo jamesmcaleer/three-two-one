@@ -93,7 +93,8 @@ wss.on("connection", (ws, req) => {
                     if (!empty){
                         if (room.privWords[room.privWords.length - 1][0] === room.privWords[room.privWords.length - 1][1]){
                             const message = {
-                                type : "game over"
+                                type : "game over",
+                                words : room.privWords[room.privWords.length - 1]
                             }
                             room.users.forEach(user => {
                                 user.send(JSON.stringify(message))

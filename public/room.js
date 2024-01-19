@@ -57,6 +57,27 @@ ws.addEventListener("message", (event) =>{
             break
 
         case "game over":
+            console.log("game over")
+            var firstWord = document.createElement("label")
+            var secondWord = document.createElement("label")
+            firstWord.innerText = data.words[0]
+            secondWord.innerText = data.words[1]
+            firstWord.id = "entry"
+            secondWord.id = "entry"
+
+            var entry = document.createElement("div")
+            entry.id = "entries"
+            entry.appendChild(firstWord)
+            entry.appendChild(secondWord)
+            
+            var allDiv = document.getElementById("allWords")
+            //allDiv.appendChild(shownWords)
+
+            allDiv.insertBefore(entry, allDiv.firstChild)
+
+            const gMessage = document.getElementById("errorMessage");
+        
+            gMessage.textContent = "";
 
             break
         
@@ -79,9 +100,9 @@ ws.addEventListener("message", (event) =>{
 
             allDiv.insertBefore(entry, allDiv.firstChild)
 
-            const message = document.getElementById("errorMessage");
+            const cMessage = document.getElementById("errorMessage");
         
-            message.textContent = "";
+            cMessage.textContent = "";
 
             break
 
@@ -111,13 +132,38 @@ function sendWord() {
     const url = window.location.href
     const urlSplit = url.split('/').filter(part => part.trim() !== '');
     const roomCode = urlSplit[urlSplit.length - 1]
-    if (word.trim !== "" && word.length >= 3 && word.length <= 12) {
-        const message = {
-            type : "word submit",
-            word : word,
-            code : roomCode
+
+    if (word !== "" && word.length >= 3 && word.length <= 12) {
+        var allDiv = document.getElementById("allWords")
+        var allEntries = allDiv.getElementsByTagName("div")
+        
+
+        var unique = true
+        for (let i = 0; i < allEntries.length; i++){
+            var entries = allEntries[i].getElementsByTagName("label")
+            for (let j = 0; j < entries.length; j++){
+                var entry = entries[j]
+                if (word === entry.innerHTML){
+                    unique = false
+                }
+            }
         }
-        ws.send(JSON.stringify(message));
+
+        if (unique){
+            const message = {
+                type : "word submit",
+                word : word,
+                code : roomCode
+            }
+            ws.send(JSON.stringify(message));
+        }
+        else {
+            const errorMessage = document.getElementById("errorMessage");
+        
+            errorMessage.textContent = "not an original word";
+        }
+
+        
 
 
     }
