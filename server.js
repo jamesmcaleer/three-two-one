@@ -3,6 +3,10 @@ const path = require('path');
 const { PassThrough } = require('stream');
 const app = express();
 
+const TIMEOUT = 120000
+
+// FOR SUNDAY ** implement find game feature and launch site
+
 // Serve static files from the 'public' directory
 app.use(express.static('public'));
 app.set('view engine', 'ejs')
@@ -23,16 +27,21 @@ app.get('/rules', (req, res) => {
 
 app.get('/:roomCode', (req, res) => {
     const roomCode = req.params.roomCode
-    const message = {
+    var message = {
         type : "confirm room",
         code : roomCode,
     }
 
+    var found = false
     rooms.forEach((room) => {
         if (room.code === roomCode){
+            found = true
             res.render('index', {room})  //{ data : {roomID : roomID}}
         }
     })
+    if (!found){
+        res.sendFile(path.join(__dirname, '/public/index.html'))
+    }
     
 })
 
@@ -63,6 +72,36 @@ wss.on("connection", (ws, req) => {
 
                 console.log(room.code)
 
+                clearTimeout(room.timeoutID)
+                
+                var timeoutID = setTimeout(() => {
+                
+                    for (let i = 0; i < rooms.length; i++){
+                        if (rooms[i].code === room.code){
+                            // send timeout message
+                            console.log(`deleting room ${room.code}, index ${i}, timeout in create`)
+                            // for users in 
+                            rooms[i].users.forEach( user => {
+                                if (user !== 0 && user !== 1 && user !== undefined){
+                                    var message = {
+                                        type : "timeout"
+                                    }
+                                    user.send(JSON.stringify(message))
+                                }
+                                
+                            })
+                                
+                            rooms.splice(i, 1)
+
+                            break
+                        }
+                    }
+
+                }, TIMEOUT)
+
+                room.timeoutID = timeoutID
+
+
                 if (room.started === false) {
                     room.started = true
                     console.log("game started")
@@ -78,10 +117,19 @@ wss.on("connection", (ws, req) => {
 
                 if (room.privWords[room.privWords.length - 1][ind] === ""){
                     room.privWords[room.privWords.length - 1][ind] = word
-                    const message = {
+                    var message = {
                         type : "allow submit"
                     }
                     ws.send(JSON.stringify(message))
+
+                    var message = {
+                        type : "player color",
+                        player : ind
+                    }
+
+                    room.users.forEach(user => {
+                        user.send(JSON.stringify(message))
+                    })
 
                     var empty = false
                     room.privWords[room.privWords.length - 1].forEach(word =>{
@@ -91,8 +139,25 @@ wss.on("connection", (ws, req) => {
                     }) 
 
                     if (!empty){
-                        if (room.privWords[room.privWords.length - 1][0] === room.privWords[room.privWords.length - 1][1]){
-                            const message = {
+                        let wordOne = room.privWords[room.privWords.length - 1][0];
+                        let wordTwo = room.privWords[room.privWords.length - 1][1];
+                        let temporary = room.privWords[room.privWords.length - 1][0];
+                        let same = true
+
+                        if (wordOne.length > wordTwo.length){
+                            wordOne = wordTwo;
+                            wordTwo = temporary;
+                        }
+
+                        for (let i = 0; i < wordOne.length; i++){
+                            if (wordOne[i] !== wordTwo[i]){
+                                same = false
+                                break
+                            }
+                        }
+
+                        if (same){
+                            var message = {
                                 type : "game over",
                                 words : room.privWords[room.privWords.length - 1]
                             }
@@ -102,7 +167,7 @@ wss.on("connection", (ws, req) => {
                             console.log("game over")
                         }
                         else{
-                            const message = {
+                            var message = {
                                 type : "continue",
                                 words : room.privWords[room.privWords.length - 1]
                             }
@@ -127,16 +192,12 @@ wss.on("connection", (ws, req) => {
                     
                 }
                 else {
-                    const message = {
+                    var message = {
                         type : "deny submit"
                     }
                     ws.send(JSON.stringify(message))
                 }
                 
-                
-
-                
-
 
                 break
 
@@ -151,9 +212,55 @@ wss.on("connection", (ws, req) => {
                 }
                 var room = rooms[index]
                 console.log(`verifying join to ${roomCode}`)
+
+                var found = false
+                rooms.forEach(cRoom => {
+                    if (cRoom.code === roomCode){
+                        found = true
+                    }
+                })
+                if (!found){
+                    console.log("invalid room, verify")
+                    const kick = {
+                        type : "room kick"
+                    }
+                    ws.send(JSON.stringify(kick))
+                    ws.close()
+                    break
+                }
+
                 //console.log(room.users)
                 if ((room.users[0] === 1) || (room.users[0] === 0)) { // if the first slot is joinable
                     room.users[0] = ws
+
+                    clearTimeout(room.timeoutID)
+
+                    var timeoutID = setTimeout(() => {
+
+                        for (let i = 0; i < rooms.length; i++){
+                            if (rooms[i].code === room.code){
+                                // send timeout message
+                                console.log(`deleting room ${room.code}, index ${i}, timeout in verify`)
+                                // for users in 
+                                rooms[i].users.forEach( user => {
+                                    if (user !== 0 && user !== 1 && user !== undefined){
+                                        var message = {
+                                            type : "timeout"
+                                        }
+                                        user.send(JSON.stringify(message))
+                                    }
+                                    
+                                })
+                                    
+                                rooms.splice(i, 1)
+    
+                                break
+                            }
+                        }
+    
+                    }, TIMEOUT)
+    
+                    room.timeoutID = timeoutID
 
                     if (room.users[1] !== 0 && room.users[1] !== 1 && room.users[1] !== undefined){ // if other slot full
 
@@ -194,6 +301,35 @@ wss.on("connection", (ws, req) => {
                 }
                 else if ((room.users[1] === 1) || (room.users[1] === 0)){ // if the second slot is joinable
                     room.users[1] = ws
+
+                    clearTimeout(room.timeoutID)
+
+                    var timeoutID = setTimeout(() => {
+
+                        for (let i = 0; i < rooms.length; i++){
+                            if (rooms[i].code === room.code){
+                                // send timeout message
+                                console.log(`deleting room ${room.code}, index ${i}, timeout in verify`)
+                                // for users in 
+                                rooms[i].users.forEach( user => {
+                                    if (user !== 0 && user !== 1 && user !== undefined){
+                                        var message = {
+                                            type : "timeout"
+                                        }
+                                        user.send(JSON.stringify(message))
+                                    }
+                                    
+                                })
+                                    
+                                rooms.splice(i, 1)
+    
+                                break
+                            }
+                        }
+    
+                    },TIMEOUT)
+    
+                    room.timeoutID = timeoutID
 
                     if (room.users[0] !== 0 && room.users[0] !== 1 && room.users[0] !== undefined){ // if other slot if full
 
@@ -256,6 +392,8 @@ wss.on("connection", (ws, req) => {
                 if (codeExists) {
                     roomCode = wss.generateRoomCode()
                 }
+
+                
                     
                 const newRoom = {
                     code : roomCode,
@@ -264,14 +402,17 @@ wss.on("connection", (ws, req) => {
                     pubWords : [["", ""]],
                     privWords : [["", ""]],
                 }
-
-                
-
                 
                 // should also put the client into the rooms page
                 rooms.push(newRoom)
+
+
+
                 console.log(`created room ${newRoom.code}`)
-                console.log(rooms)
+                //console.log(rooms)
+                
+
+
                 // send message back to client
                 const success = {
                     type : "success room message",
@@ -351,7 +492,7 @@ wss.on("connection", (ws, req) => {
             }
         }
         if (found){
-            //console.log(i)
+            console.log('found', i)
 
             var players = [0, 0]
             for (let j = 0; j < room.users.length; j++){
@@ -389,10 +530,15 @@ wss.on("connection", (ws, req) => {
             }
             else if (room.users[0] === 0 && room.users[1] === 0){
                 setTimeout(() => {
-                    if (room.users[0] === 0 && room.users[1] === 0){
-                        console.log(`deleting room ${room.code}, index ${i}, room empty`)
-                        rooms.splice(i, 1)
-                    }
+                    rooms.forEach( curRoom =>{
+                        if (curRoom.code === room.code){
+                            if (room.users[0] === 0 && room.users[1] === 0){
+                                console.log(`deleting room ${room.code}, index ${i}, room empty`)
+                                rooms.splice(i, 1)
+                            }
+                        }
+                    })
+                    
                 }, 5000);
             }
         }

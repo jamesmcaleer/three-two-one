@@ -10,24 +10,55 @@
 <body>
     
 
-    <img src="logo.png" width="275" height="125">
+    <img src="logo.png" id="logo">
 
     <br>
-    <br>
+
+    <div id="rulesOverlay">
+
+        <div id="rulesDiv">
+            <button type="button" id="exitButton" onclick="hideRules()">
+                <img src="exit.png" id="exitImg">
+            </button>
+
+            <br>
+
+            <label id="rulesHeader"></label>
+
+            <label id="rulesHeader">How To Play</label>
+            
+            <p id="rule">3 2 1! is a Two Player game</p>
+            <p id="rule">The goal is for both players to submit the same word</p>
+            <p id="rule">...but they cannot communicate</p>
+            <p id="rule">It is easiest to understand through example:</p>
+            <p id="rule" class="green">Player One thinks of the random word "plastic"</p>
+            <p id="rule" class="red">Player Two thinks of another random word "container"</p>
+            <p id="rule">The two words are revealed to both players</p>
+            <p id="rule" class="green">Player One connects these two words and forms the guess "bag"</p>
+            <p id="rule" class="red">Player Two also thinks of a way to connect these words and guesses "bin"</p>
+            <p id="rule">These words are again revealed to both players</p>
+            <p id="rule" class="green">Player One now connects these two words and guesses "garbage"</p>
+            <p id="rule" class="red">Player Two thinks about a connection between "bag" and "bin" and guesses "garbage"</p>
+            <p id="rule">Their guesses are revealed and the Players win the game</p>
+        </div>
+    </div>
+    
 
     <div class="join">
         <input type="text" id="joinCode" placeholder="Game PIN" size="10" />
         <button id="joinButton" onclick="joinGame()">Enter</button>
     </div>
     <label id="errorMessage"> </label>
-    
-    <br>
 
     <div class="create">
         <button id="createButton" onclick="createGame()">Create Game</button>
     </div>
 
-    <br>
+
+    <div class="find">
+        <button type="button" id="findButton" onclick="findGame()">Find Game</button>
+    </div>
+
 
     <div class="rules">
         <button type="button" id="rulesButton" onclick="showRules()">How To Play</button>

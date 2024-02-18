@@ -29,6 +29,7 @@ function createGame(){
             
             messageLabel.textContent = message;
         }
+        ws.close()
     })
 }
 
@@ -71,11 +72,19 @@ function joinGame(){
             
             messageLabel.textContent = message;
         }
+
+        ws.close()
     })
+
 }
 
 function showRules() {
-    window.location.href = `/rules`;
+    document.getElementById("rulesOverlay").style.display = "flex";
+
+}
+
+function hideRules() {
+    document.getElementById("rulesOverlay").style.display = "none";
 
 }
 

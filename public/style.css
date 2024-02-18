@@ -24,10 +24,16 @@ html {
 body {
     background-color: #212121; 
     background-image: linear-gradient(to bottom right, rgba(30,0,0,1), rgba(30, 30, 0, 1), rgba(0, 30, 0, 1));
-
     font-family: Arial, Helvetica, sans-serif;
     text-align: center;
-    
+
+}
+
+body.error {
+    background-color: #212121; 
+    background-image: linear-gradient(to bottom right, rgba(20, 20, 30, 1), rgba(30,0,40,1), rgba(20, 0, 30, 1), rgba(20, 20, 30, 1)); 
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
 }
 
 img {
@@ -46,6 +52,176 @@ h1 {
 
 h4 {
     margin : 0;
+}
+
+#logo {
+    width: 275px;
+    height: 125px;
+}
+
+#rulesOverlay {
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Adjust the background color and opacity as needed */
+    color: white; /* Adjust the text color as needed */
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 999; /* Make sure it's above other elements on the page */
+}
+
+#rulesDiv {
+    width: 350px;
+    height: 600px;
+    border-radius: 20px;
+    border: 0px;
+    margin-top: 10%;
+    margin: auto;
+    justify-content: center;
+    background-color: rgba(20, 20, 20, 0.9);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    overflow-y: auto;
+}
+
+#rulesHeader {
+    display: block;
+    margin: 10px;
+    font-size: 30px;
+    font-weight: bold;
+    color: white;
+}
+
+#rule {
+    display: block;
+    margin: 20px;
+    opacity: 80%;
+    font-size: 22px;
+}
+
+#rule.green {
+    color: #149b3c;
+}
+
+#rule.red {
+    color: #DD334C;
+}
+
+#exitButton {
+    float: left;
+    padding-left: 20px;
+    background: transparent;
+    border: none;
+    outline: none;
+    overflow: hidden;
+}
+
+#error404Header {
+    color: white;
+    font-size: 70px;
+    font-weight: bolder;
+}
+
+#error404Div {
+    width: 350px;
+    height: 600px;
+    border-radius: 20px;
+    border: 0px;
+    margin-top: 10%;
+    margin: auto;
+    background-color: rgba(100, 100, 100, 0.3);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+#timeoutOverlay {
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Adjust the background color and opacity as needed */
+    color: white; /* Adjust the text color as needed */
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 999; /* Make sure it's above other elements on the page */
+}
+
+#winOverlay {
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Adjust the background color and opacity as needed */
+    color: white; /* Adjust the text color as needed */
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 999; /* Make sure it's above other elements on the page */
+}
+
+#timeoutDiv {
+    width: 350px;
+    height: 350px;
+    border-radius: 20px;
+    border: 0px;
+    background-color: rgba(0, 0, 0, 0.8);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+#timeoutHeader {
+    display: block;
+    margin-top: 20px;
+    margin-bottom: 40px;
+    font-size: 30px;
+    font-weight: bold;
+    color: white;
+    opacity: 80%;
+}
+
+#winHeader {
+    display: block;
+    margin-top: 20px;
+    margin-bottom: 40px;
+    font-size: 30px;
+    font-weight: bold;
+    color: gold;
+    opacity: 80%;
+}
+
+#timeoutDescription {
+    display: block;
+    margin: 20px;
+    opacity: 60%;
+}
+
+#returnHome {
+    margin-top: 20px;
+    width: 200px;
+    height: 90px;
+    border: 0px;
+    border-radius: 10px;
+    background-color: transparent;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    font-weight: bold;
+    color: #ffffff;
+    font-size: 25px;
+    opacity: 70%;
+    
+}
+
+#returnHome.timeout {
+    background-image: linear-gradient(to bottom right, rgba(80, 20, 20 ,0.3),rgba(180, 40, 80, 0.3));
+}
+
+#returnHome.win {
+    background-image: linear-gradient(to bottom right, rgba(100, 100, 20 ,0.3),rgba(220, 220, 40, 0.3));
 }
 
 #room {
@@ -85,7 +261,7 @@ h4 {
 }
 
 #playerTwo {
-    background-color: #ffffff;
+    background-color: #212121;
     border-radius: 20px;
     font-weight: bold;
     padding: 10px;
@@ -99,7 +275,6 @@ h4 {
 
 
 #inputArea {
-    display: block;
     margin: auto;
     margin-top: 100px;
     margin-bottom: 5px;
@@ -176,6 +351,7 @@ h4 {
     width: 300px;
     margin: 20px auto;
     padding: 20px;
+    margin-top: 40px;
     background-color: #212121;
     display: flex;
     flex-direction: column;
@@ -226,6 +402,7 @@ h4 {
     width: 300px; /* Adjust the width as needed */
     margin: 20px auto; /* Adjust the margin as needed */
     padding: 20px;
+    margin-top: 40px;
     background-color: rgb(33, 33, 33);
     display: flex;
     flex-direction: column;
@@ -250,10 +427,11 @@ h4 {
     font-weight: 600;
 }
 
-.rules {
+.find {
     width: 300px; /* Adjust the width as needed */
     margin: 20px auto; /* Adjust the margin as needed */
     padding: 20px;
+    margin-top: 40px;
     background-color: rgb(33, 33, 33);
     display: flex;
     flex-direction: column;
@@ -263,15 +441,41 @@ h4 {
     background-image: linear-gradient(to bottom right, rgba(248, 180, 0, 0.2) 10%, rgba(33, 33, 33 ,1));
 }
 
+#findButton {
+    height: 50px;
+    width: 250px;
+
+    background-color: #d39b00;
+    color: rgb(255, 255, 255);
+    font-size: 18px;
+    border-radius: 5px;
+    border: 2px solid #d39b00;
+    font-weight: 600;
+}
+
+.rules {
+    width: 300px; /* Adjust the width as needed */
+    margin: 20px auto; /* Adjust the margin as needed */
+    padding: 20px;
+    margin-top: 40px;
+    background-color: rgb(33, 33, 33);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    background-image: linear-gradient(to bottom right, rgba(110, 10, 140, 0.2) 10%, rgba(30, 30, 30, 1));
+}
+
 #rulesButton {
     height: 50px;
     width: 250px;
 
-    background-color: #f8b400;
+    background-color: #4e216d;
     color: rgb(255, 255, 255);
     font-size: 18px;
     border-radius: 5px;
-    border: 2px solid #f8b400;
+    border: 2px solid #4e216d;
     font-weight: 600;
 }
 
@@ -279,7 +483,12 @@ h4 {
 
 
 
-@media (max-width: 500px) {
+@media (max-width: 1050px) and (min-height: 700px) {
+
+    #logo {
+        width: 60%;
+        height: 10%;
+    }
 
     .join {
         width: 70%;
@@ -287,6 +496,7 @@ h4 {
 
     #joinCode {
         width: 100%;
+
     }
 
     #joinButton {
@@ -302,6 +512,14 @@ h4 {
         width: 100%;
     }
 
+    .find {
+        width: 70%;
+    }
+
+    #findButton {
+        width: 100%;
+    }
+
     .rules {
         width: 70%;
         
@@ -312,8 +530,24 @@ h4 {
     }
 }
 
-@media (max-height: 700px) {
+@media (max-height: 800px) {
     #inputArea {
         margin-top: 40px;
+    }
+
+    .join {
+        margin-top: 10px;
+    }
+
+    .create {
+        margin-top: 25px;
+    }
+
+    .find {
+        margin-top: 25px;
+    }
+
+    .rules {
+        margin-top: 25px;
     }
 }

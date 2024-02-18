@@ -8,7 +8,33 @@
     <link href="style.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-    <img src="logo.png" width="275" height="125">
+    <div id="timeoutOverlay">
+        <div id="timeoutDiv">
+            <label id="timeoutHeader">Connection Timed Out</label>
+
+            <p id="timeoutDescription">A player has disconnected from the game</p>
+            <p id="timeoutDescription">Please return to the menu</p>
+
+            <button id="returnHome" class="timeout" onclick="returnHome()">MENU</button>
+        </div>
+        
+    </div>
+
+    <div id="winOverlay">
+        <div id="timeoutDiv">
+            <label id="winHeader">YOU WIN</label>
+
+            <p id="timeoutDescription">Both players have guessed the same word!</p>
+            <p id="timeoutDescription">Return to the menu to play again</p>
+
+            <button id="returnHome" class="win" onclick="returnHome()">MENU</button>
+        </div>
+        
+    </div>
+
+    <img src="logo.png" id="logo">
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
     
     <br>
     

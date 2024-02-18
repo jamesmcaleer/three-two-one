@@ -19,6 +19,15 @@ ws.addEventListener("message", (event) =>{
     const data = JSON.parse(event.data)
     const type = data.type
     switch (type){
+        case "player color":
+            if (data.player === 0){
+                document.getElementById("playerOne").style.backgroundImage = "linear-gradient(to bottom right, rgb(25, 45, 25)10%, rgb(35, 95, 35))";
+            }
+            else {
+                document.getElementById("playerTwo").style.backgroundImage = "linear-gradient(to bottom right, rgb(25, 45, 25)10%, rgb(35, 95, 35))";
+
+            }
+            break
 
         case "allow submit":
             const submitMessage = document.getElementById("errorMessage");
@@ -30,6 +39,10 @@ ws.addEventListener("message", (event) =>{
             const denyMessage = document.getElementById("errorMessage");
         
             denyMessage.textContent = "already submitted";
+            break
+
+        case "timeout":
+            document.getElementById("timeoutOverlay").style.display = "flex"
             break
 
         case "update code":
@@ -79,6 +92,49 @@ ws.addEventListener("message", (event) =>{
         
             gMessage.textContent = "";
 
+            document.getElementById("wordInput").disabled = true;
+            document.getElementById("wordButton").disabled = true;
+            
+            var count = 200;
+            var defaults = {
+            origin: { y: 0.7 }
+            };
+
+            function fire(particleRatio, opts) {
+            confetti({
+                ...defaults,
+                ...opts,
+                particleCount: Math.floor(count * particleRatio)
+            });
+            }
+
+            fire(0.25, {
+            spread: 26,
+            startVelocity: 55,
+            });
+            fire(0.2, {
+            spread: 60,
+            });
+            fire(0.35, {
+            spread: 100,
+            decay: 0.91,
+            scalar: 0.8
+            });
+            fire(0.1, {
+            spread: 120,
+            startVelocity: 25,
+            decay: 0.92,
+            scalar: 1.2
+            });
+            fire(0.1, {
+            spread: 120,
+            startVelocity: 45,
+            });
+
+            setTimeout(() => {
+                document.getElementById("winOverlay").style.display = "flex"
+            }, 3000)
+
             break
         
         case "continue":
@@ -103,6 +159,9 @@ ws.addEventListener("message", (event) =>{
             const cMessage = document.getElementById("errorMessage");
         
             cMessage.textContent = "";
+
+            document.getElementById("playerOne").style.backgroundImage = "linear-gradient(to bottom right, rgb(255, 255, 255)10%, rgb(90, 90, 90))";
+            document.getElementById("playerTwo").style.backgroundImage = "linear-gradient(to bottom right, rgb(255, 255, 255)10%, rgb(90, 90, 90))";
 
             break
 
@@ -206,6 +265,10 @@ function copyLink() {
     console.log("Text copied to clipboard!");
     copyMessage.innerHTML = "[link copied]"
 
+}
+
+function returnHome() {
+    window.location.href = "/";
 }
 
 document.addEventListener("keyup", (e) => {
