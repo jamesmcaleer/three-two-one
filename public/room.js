@@ -1,5 +1,5 @@
-const ws = new WebSocket("ws://localhost:8082"); // make ws into wss later on
-//const ws = new WebSocket("ws://3.141.8.146:8082")
+//const ws = new WebSocket("ws://localhost:8082"); // make ws into wss later on
+const ws = new WebSocket("ws://3.141.8.146:8082")
 
 ws.addEventListener("open", () => {
     console.log("connection to room");
