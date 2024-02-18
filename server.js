@@ -19,6 +19,7 @@ const WebSocket = require('ws');
 const wss = new WebSocket.Server({ port:8082 });
 
 const rooms = [];
+var queue = [];
 
 app.get('/rules', (req, res) => {
     console.log("rules")
@@ -57,6 +58,60 @@ wss.on("connection", (ws, req) => {
         const data = JSON.parse(event)
         const type = data.type
         switch (type) {
+            case "remove queue":
+                console.log("removing from queue")
+                queue = [];
+
+                break
+
+            case "find game":
+                queue.push(ws)
+
+                if (queue.length === 2){
+                    var roomCode = wss.generateRoomCode()
+            
+                    var codeExists = false
+                    for (let i = 0; i < rooms.length; i++){
+                        if (rooms[i].code === roomCode){
+                            codeExists = true
+                            break
+                        }
+                    }
+                    
+                    if (codeExists) {
+                        roomCode = wss.generateRoomCode()
+                    }
+
+                    var newRoom = {
+                        code : roomCode,
+                        started : false,
+                        users : [1, 1],
+                        pubWords : [["", ""]],
+                        privWords : [["", ""]],
+                    }
+                    
+                    rooms.push(newRoom)
+
+                    console.log(`created room ${newRoom.code}, resetting queue`)
+
+                    var foundGame = {
+                        type : "found game",
+                        code : newRoom.code
+                    }
+
+                    queue.forEach(user => {
+                        user.send(JSON.stringify(foundGame))
+                    })
+
+                    queue = [];
+
+                }
+
+                
+
+
+                break
+
             case "word submit":
                 var roomCode = data.code
                 var word = data.word
@@ -381,7 +436,7 @@ wss.on("connection", (ws, req) => {
             case "create":
                 var roomCode = wss.generateRoomCode()
             
-                let codeExists = false
+                var codeExists = false
                 for (let i = 0; i < rooms.length; i++){
                     if (rooms[i].code === roomCode){
                         codeExists = true
@@ -395,7 +450,7 @@ wss.on("connection", (ws, req) => {
 
                 
                     
-                const newRoom = {
+                var newRoom = {
                     code : roomCode,
                     started : false,
                     users : [1, 0],

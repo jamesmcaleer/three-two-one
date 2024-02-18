@@ -1,7 +1,7 @@
 
 function createGame(){
-    //const ws = new WebSocket("ws://localhost:8082"); // make ws into wss later on
-    const ws = new WebSocket("ws://3.141.8.146:8082")
+    ws = new WebSocket("ws://localhost:8082"); // make ws into wss later on
+    //ws = new WebSocket("ws://3.141.8.146:8082")
 
     ws.addEventListener("open", () => {
         const create = {
@@ -37,8 +37,8 @@ function createGame(){
 // will need the room code to find which user to remove from the room
 
 function joinGame(){
-    //const ws = new WebSocket("ws://localhost:8082"); // make ws into wss later on
-    const ws = new WebSocket("ws://3.141.8.146:8082")
+    ws = new WebSocket("ws://localhost:8082"); // make ws into wss later on
+    //ws = new WebSocket("ws://3.141.8.146:8082")
 
     ws.addEventListener("open", () => {
         const inputElement = document.getElementById("joinCode");
@@ -76,6 +76,49 @@ function joinGame(){
         ws.close()
     })
 
+    
+
+}
+
+function findGame() {
+    document.getElementById("loadingOverlay").style.display = "flex"
+
+    ws = new WebSocket("ws://localhost:8082"); // make ws into wss later on
+    //ws = new WebSocket("ws://3.141.8.146:8082")
+
+    ws.addEventListener("open", () => {
+        var findGame = {
+            type : "find game"
+        }
+        ws.send(JSON.stringify(findGame))
+    })
+
+    ws.addEventListener("message", (event) => {
+        const data = JSON.parse(event.data)
+        const type = data.type
+
+        if (type === "found game"){
+            window.location.href = `/${data.code}`;
+            ws.close();
+        }
+    })
+
+    window.addEventListener("beforeunload", () => {
+        exitFind();
+    })
+
+}
+
+function exitFind() {
+    document.getElementById("loadingOverlay").style.display = "none"
+
+    var removeQueue = {
+        type : "remove queue"
+    }
+
+    ws.send(JSON.stringify(removeQueue))
+
+    ws.close()
 }
 
 function showRules() {

@@ -13,6 +13,7 @@ button:active{
 html, body{
     padding: 0;
     margin: 0;
+    overflow-x: hidden;
     
 }
 
@@ -59,6 +60,8 @@ h4 {
     height: 125px;
 }
 
+
+
 #rulesOverlay {
 
     position: fixed;
@@ -71,7 +74,7 @@ h4 {
     display: none;
     align-items: center;
     justify-content: center;
-    z-index: 999; /* Make sure it's above other elements on the page */
+    z-index: 2; /* Make sure it's above other elements on the page */
 }
 
 #rulesDiv {
@@ -110,13 +113,13 @@ h4 {
     color: #DD334C;
 }
 
-#exitButton {
+.exitImg {
     float: left;
     padding-left: 20px;
-    background: transparent;
-    border: none;
-    outline: none;
-    overflow: hidden;
+}
+
+.exitImg:active {
+    transform: scale(.95);
 }
 
 #error404Header {
@@ -148,7 +151,39 @@ h4 {
     display: none;
     align-items: center;
     justify-content: center;
-    z-index: 999; /* Make sure it's above other elements on the page */
+    z-index: 2; /* Make sure it's above other elements on the page */
+}
+
+#loadingOverlay {
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Adjust the background color and opacity as needed */
+    color: white; /* Adjust the text color as needed */
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2; /* Make sure it's above other elements on the page */
+}
+
+.loader {
+    border: 10px solid #f3f3f3;
+    border-top: 10px solid #125B50;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    animation: spin 2s linear infinite;
+    margin: auto;
+    margin-top: 50px;
+    
+}
+  
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 #winOverlay {
@@ -163,19 +198,21 @@ h4 {
     display: none;
     align-items: center;
     justify-content: center;
-    z-index: 999; /* Make sure it's above other elements on the page */
+    z-index: 2; /* Make sure it's above other elements on the page */
 }
 
-#timeoutDiv {
+#standardDiv {
     width: 350px;
     height: 350px;
     border-radius: 20px;
     border: 0px;
+    margin-top: 10%;
     background-color: rgba(0, 0, 0, 0.8);
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    justify-content: center;
 }
 
-#timeoutHeader {
+#standardHeader {
     display: block;
     margin-top: 20px;
     margin-bottom: 40px;
@@ -185,17 +222,11 @@ h4 {
     opacity: 80%;
 }
 
-#winHeader {
-    display: block;
-    margin-top: 20px;
-    margin-bottom: 40px;
-    font-size: 30px;
-    font-weight: bold;
+#standardHeader.gold {
     color: gold;
-    opacity: 80%;
 }
 
-#timeoutDescription {
+#standardDescription {
     display: block;
     margin: 20px;
     opacity: 60%;
@@ -358,7 +389,7 @@ h4 {
     align-items: center;
     border-radius: 5px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    background-image: linear-gradient(to bottom right, rgba(221, 51, 76, 0.2) 10%, rgba(33, 33, 33 ,1));
+    background-image: linear-gradient(to bottom right, rgba(18, 91, 80, 0.2) 10%, rgba(33, 33, 33 ,1));
 
 }
 
@@ -384,11 +415,11 @@ h4 {
     height: 50px;
     width: 250px;
 
-    background-color: #8a4747;
+    background-color: #125B50;
     color: rgb(255, 255, 255);
     font-size: 18px;
     border-radius: 5px;
-    border: 2px solid #8a4747;
+    border: 2px solid #125B50;
     font-weight: 600;
 }
 
@@ -409,7 +440,8 @@ h4 {
     align-items: center;
     border-radius: 5px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    background-image: linear-gradient(to bottom right, rgba(18, 91, 80, 0.2) 10%, rgba(33, 33, 33 ,1));
+    
+    background-image: linear-gradient(to bottom right, rgba(248, 180, 0, 0.2) 10%, rgba(33, 33, 33 ,1));
     
 
 
@@ -419,11 +451,11 @@ h4 {
     height: 50px;
     width: 250px;
 
-    background-color: #125B50;
+    background-color: #d39b00;
     color: rgb(255, 255, 255);
     font-size: 18px;
     border-radius: 5px;
-    border: 2px solid #125B50;
+    border: 2px solid #d39b00;
     font-weight: 600;
 }
 
@@ -438,18 +470,19 @@ h4 {
     align-items: center;
     border-radius: 5px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    background-image: linear-gradient(to bottom right, rgba(248, 180, 0, 0.2) 10%, rgba(33, 33, 33 ,1));
+    
+    background-image: linear-gradient(to bottom right, rgba(221, 51, 76, 0.2) 10%, rgba(33, 33, 33 ,1));
 }
 
 #findButton {
     height: 50px;
     width: 250px;
 
-    background-color: #d39b00;
+    background-color: #8a4747;
     color: rgb(255, 255, 255);
     font-size: 18px;
     border-radius: 5px;
-    border: 2px solid #d39b00;
+    border: 2px solid #8a4747;
     font-weight: 600;
 }
 

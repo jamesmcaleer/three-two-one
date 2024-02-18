@@ -17,9 +17,7 @@
     <div id="rulesOverlay">
 
         <div id="rulesDiv">
-            <button type="button" id="exitButton" onclick="hideRules()">
-                <img src="exit.png" id="exitImg">
-            </button>
+            <img src="exit.png" class="exitImg" onclick="hideRules()">
 
             <br>
 
@@ -41,6 +39,26 @@
             <p id="rule" class="red">Player Two thinks about a connection between "bag" and "bin" and guesses "garbage"</p>
             <p id="rule">Their guesses are revealed and the Players win the game</p>
         </div>
+    </div>
+
+    <div id="loadingOverlay">
+        
+        <div id="standardDiv">
+            <img src="exit.png" class="exitImg" onclick="exitFind()">
+
+            <br>
+
+            <label id="standardHeader"></label>
+
+            <label id="standardHeader">Searching For Game</label>
+
+            <p id="standardDescription">Please wait until another player searches for a game...</p>
+
+            <div class="loader"></div>
+
+
+        </div>
+        
     </div>
     
 
