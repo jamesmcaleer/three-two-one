@@ -1,7 +1,9 @@
 
+const WSURL = 'wss://play321.net:8082'
+
 function createGame(){
     //ws = new WebSocket("ws://localhost:8082"); // make ws into wss later on
-    ws = new WebSocket("ws://3.141.8.146:8082")
+    ws = new WebSocket(WSURL)
 
     ws.addEventListener("open", () => {
         const create = {
@@ -38,7 +40,7 @@ function createGame(){
 
 function joinGame(){
     //ws = new WebSocket("ws://localhost:8082"); // make ws into wss later on
-    ws = new WebSocket("ws://3.141.8.146:8082")
+    ws = new WebSocket(WSURL)
 
     ws.addEventListener("open", () => {
         const inputElement = document.getElementById("joinCode");
@@ -84,7 +86,7 @@ function findGame() {
     document.getElementById("loadingOverlay").style.display = "flex"
 
     //ws = new WebSocket("ws://localhost:8082"); // make ws into wss later on
-    ws = new WebSocket("ws://3.141.8.146:8082")
+    ws = new WebSocket(WSURL)
 
     ws.addEventListener("open", () => {
         var findGame = {
